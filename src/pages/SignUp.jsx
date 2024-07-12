@@ -1,9 +1,14 @@
 import React, { useState } from "react";
 import SignImage from "../assets/registerBG.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { Oval } from "react-loader-spinner";
 
 const SignUp = () => {
+  const auth = getAuth();
+  let navigate = useNavigate;
+
   let [email, setEmail] = useState("");
   let [fullName, setFullName] = useState("");
   let [password, setPassword] = useState("");
@@ -13,6 +18,8 @@ const SignUp = () => {
   let [passworderr, setPassworderr] = useState("");
 
   let [passwordshow, setPasswordshow] = useState(false);
+
+  let [success, setSuccess] = useState(false);
 
   let handleEmail = (e) => {
     setEmail(e.target.value);
@@ -30,12 +37,28 @@ const SignUp = () => {
   let handleSubmit = () => {
     if (!email) {
       setEmailerr("Email is required");
+    } else if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
+      setEmailerr("Invalid Email");
     }
     if (!fullName) {
       setFullNameerr("Name is required");
     }
     if (!password) {
       setPassworderr("Password is required");
+    }
+
+    if (email && fullName && password) {
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          navigate('/')
+          setSuccess(true);
+          const user = userCredential.user;
+          
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        });
     }
   };
 
@@ -89,7 +112,7 @@ const SignUp = () => {
             <input
               onChange={handlePassword}
               className=" w-full h-full border border-secondary/50 rounded-lg pl-[62px]"
-              type={passwordshow? 'text' : 'password'}
+              type={passwordshow ? "text" : "password"}
               placeholder="Enter Your Password"
               value={password}
             />
@@ -112,15 +135,33 @@ const SignUp = () => {
 
           {/* =================== Button Area ======================= */}
 
-          <button
-            onClick={handleSubmit}
-            className="bg-primary w-[368px] py-[20px] text-xl font-semibold text-white rounded-[86px] mt-[50px]"
-          >
-            Sign up
-          </button>
+          {success ? (
+            <div className="w-[368px] flex justify-center mt-[30px]">
+              <Oval
+              visible={true}
+              height="30"
+              width="30"
+              color="#4fa94d"
+              ariaLabel="oval-loading"
+              wrapperStyle={{}}
+              wrapperClass=""
+            />
+            </div>
+            
+          ) : (
+            <button
+              onClick={handleSubmit}
+              className="bg-primary w-[368px] py-[20px] text-xl font-semibold text-white rounded-[86px] mt-[50px]"
+            >
+              Sign up
+            </button>
+          )}
+
           <p className="text-sm text-secondary text-center w-[368px] mt-[35px]">
             Already have an account ?{" "}
-            <Link className="text-[#EA6C00] font-bold">Sign In</Link>
+            <Link to="/" className="text-[#EA6C00] font-bold">
+              Sign In
+            </Link>
           </p>
         </div>
       </div>
