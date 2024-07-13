@@ -7,7 +7,7 @@ import { Oval } from "react-loader-spinner";
 
 const SignUp = () => {
   const auth = getAuth();
-  let navigate = useNavigate;
+  let navigate = useNavigate();
 
   let [email, setEmail] = useState("");
   let [fullName, setFullName] = useState("");
@@ -19,7 +19,7 @@ const SignUp = () => {
 
   let [passwordshow, setPasswordshow] = useState(false);
 
-  let [success, setSuccess] = useState(false);
+  let [loader, setLoader] = useState(false);
 
   let handleEmail = (e) => {
     setEmail(e.target.value);
@@ -48,16 +48,22 @@ const SignUp = () => {
     }
 
     if (email && fullName && password) {
+      setLoader(true);
+
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          navigate('/')
-          setSuccess(true);
-          const user = userCredential.user;
-          
+          setTimeout(() => {
+            navigate("/");
+            setLoader(false);
+            const user = userCredential.user;
+          }, 2000);
         })
         .catch((error) => {
-          const errorCode = error.code;
-          const errorMessage = error.message;
+          setTimeout(() => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            setLoader(false);
+          }, 2000);
         });
     }
   };
@@ -135,19 +141,18 @@ const SignUp = () => {
 
           {/* =================== Button Area ======================= */}
 
-          {success ? (
+          {loader ? (
             <div className="w-[368px] flex justify-center mt-[30px]">
               <Oval
-              visible={true}
-              height="30"
-              width="30"
-              color="#4fa94d"
-              ariaLabel="oval-loading"
-              wrapperStyle={{}}
-              wrapperClass=""
-            />
+                visible={true}
+                height="30"
+                width="30"
+                color="#4fa94d"
+                ariaLabel="oval-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
             </div>
-            
           ) : (
             <button
               onClick={handleSubmit}
