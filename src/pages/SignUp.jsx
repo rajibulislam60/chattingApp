@@ -60,6 +60,10 @@ const SignUp = () => {
         })
         .catch((error) => {
           setTimeout(() => {
+            if (error.code.includes("auth/email-already-in-use")){
+              setEmailerr('Email alreay use')
+            }
+            
             const errorCode = error.code;
             const errorMessage = error.message;
             setLoader(false);

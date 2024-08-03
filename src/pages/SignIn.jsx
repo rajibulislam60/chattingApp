@@ -1,9 +1,19 @@
 import React, { useState } from "react";
 import SignImage from "../assets/signIN.jpg";
+import LoginImage from "../assets/loginGoogle.png";
 import { Link } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
 
 const SignIn = () => {
+  const auth = getAuth();
+  const provider = new GoogleAuthProvider();
+
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
 
@@ -30,7 +40,48 @@ const SignIn = () => {
     if (!password) {
       setPassworderr("Password is required");
     }
+    if(email && password){
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          
+          
+        })
+        .catch((error) => {
+          if (error.code.includes("auth/invalid-credential")) {
+            alert("Invalid-credential");
+          }
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          
+          
+        });
+    }
   };
+
+  let handleGoogleLogin=()=>{
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access the Google API.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+        // ...
+      });
+  }
 
   return (
     <div className="w-full h-screen flex">
@@ -39,7 +90,9 @@ const SignIn = () => {
           <h1 className="text-[34px] font-bold text-secondary">
             Login to your account!
           </h1>
-
+          <button onClick={handleGoogleLogin} className="mt-[30px]">
+            <img src={LoginImage} alt="Login by google" />
+          </button>
           {/* ===================== Input Area ======================= */}
 
           <div className="w-[368px] h-[80px] mt-[61px] relative">
