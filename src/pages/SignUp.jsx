@@ -2,10 +2,16 @@ import React, { useState } from "react";
 import SignImage from "../assets/registerBG.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+} from "firebase/auth";
 import { Oval } from "react-loader-spinner";
+import { getDatabase, ref, set } from "firebase/database";
 
 const SignUp = () => {
+  const db = getDatabase();
   const auth = getAuth();
   let navigate = useNavigate();
 
@@ -52,18 +58,25 @@ const SignUp = () => {
 
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
-          setTimeout(() => {
-            navigate("/");
-            setLoader(false);
-            const user = userCredential.user;
-          }, 2000);
+          sendEmailVerification(auth.currentUser).then(() => {
+            set(ref(db, "users/" + userCredential.user.uid), {
+              username: userCredential.user.displayName,
+              email: userCredential.user.email,
+              profile_picture: "",
+            }).then(() => {
+              setTimeout(() => {
+                navigate("/signin");
+                setLoader(false);
+              }, 2000);
+            });
+          });
         })
         .catch((error) => {
           setTimeout(() => {
-            if (error.code.includes("auth/email-already-in-use")){
-              setEmailerr('Email alreay use')
+            if (error.code.includes("auth/email-already-in-use")) {
+              setEmailerr("Email alreay use");
             }
-            
+
             const errorCode = error.code;
             const errorMessage = error.message;
             setLoader(false);
@@ -168,7 +181,7 @@ const SignUp = () => {
 
           <p className="text-sm text-secondary text-center w-[368px] mt-[35px]">
             Already have an account ?{" "}
-            <Link to="/" className="text-[#EA6C00] font-bold">
+            <Link to="/signin" className="text-[#EA6C00] font-bold">
               Sign In
             </Link>
           </p>
