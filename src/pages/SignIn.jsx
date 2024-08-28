@@ -9,10 +9,13 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
 } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { signinUserInfo } from "../slices/userSlice";
 
 const SignIn = () => {
   const auth = getAuth();
   const provider = new GoogleAuthProvider();
+  let dispatch = useDispatch();
 
   let [email, setEmail] = useState("");
   let [password, setPassword] = useState("");
@@ -40,50 +43,50 @@ const SignIn = () => {
     if (!password) {
       setPassworderr("Password is required");
     }
-    if(email && password){
+    if (email && password) {
+      // let user = {
+      //   name: "rajib",
+      // }
+      // localStorage.setItem("user", JSON.stringify(user))
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log(user);
-          
-          
+          dispatch(signinUserInfo(user))
           
         })
         .catch((error) => {
+          const errorCode = error.code;
           if (error.code.includes("auth/invalid-credential")) {
             alert("Invalid-credential");
           }
-          const errorCode = error.code;
-          const errorMessage = error.message;
           
-          
+          // const errorMessage = error.message;
         });
     }
   };
 
-  let handleGoogleLogin=()=>{
+  let handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
-        const user = result.user;
-        // IdP data available using getAdditionalUserInfo(result)
-        // ...
+        console.log(result);
+
+        // const credential = GoogleAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+
+        // const user = result.user;
       })
       .catch((error) => {
-        // Handle Errors here.
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // The email of the user's account used.
-        const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+        console.log(error);
+
+        // const errorCode = error.code;
+        // const errorMessage = error.message;
+
+        // const email = error.customData.email;
+
+        // const credential = GoogleAuthProvider.credentialFromError(error);
       });
-  }
+  };
 
   return (
     <div className="w-full h-screen flex">

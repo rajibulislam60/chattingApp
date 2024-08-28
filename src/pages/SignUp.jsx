@@ -6,6 +6,7 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   sendEmailVerification,
+  updateProfile,
 } from "firebase/auth";
 import { Oval } from "react-loader-spinner";
 import { getDatabase, ref, set } from "firebase/database";
@@ -59,16 +60,26 @@ const SignUp = () => {
       createUserWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           sendEmailVerification(auth.currentUser).then(() => {
-            set(ref(db, "users/" + userCredential.user.uid), {
-              username: userCredential.user.displayName,
-              email: userCredential.user.email,
-              profile_picture: "",
-            }).then(() => {
-              setTimeout(() => {
-                navigate("/signin");
-                setLoader(false);
-              }, 2000);
-            });
+            updateProfile(auth.currentUser, {
+              displayName: fullName,
+              photoURL: "",
+            })
+              .then(() => {
+                set(ref(db, "users/" + userCredential.user.uid), {
+                  username: userCredential.user.displayName,
+                  email: userCredential.user.email,
+                  profile_picture: "",
+                }).then(() => {
+                  setTimeout(() => {
+                    navigate("/signin");
+                    setLoader(false);
+                  }, 2000);
+                });
+              })
+              .catch((error) => {
+                console.log(error);
+                
+              });
           });
         })
         .catch((error) => {
