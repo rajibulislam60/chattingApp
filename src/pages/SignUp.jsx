@@ -69,7 +69,9 @@ const SignUp = () => {
                   username: userCredential.user.displayName,
                   email: userCredential.user.email,
                   profile_picture: "",
-                  date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`
+                  date: `${new Date().getFullYear()}-${
+                    new Date().getMonth() + 1
+                  }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,
                 }).then(() => {
                   setTimeout(() => {
                     navigate("/signin");
@@ -79,7 +81,6 @@ const SignUp = () => {
               })
               .catch((error) => {
                 console.log(error);
-                
               });
           });
         })
