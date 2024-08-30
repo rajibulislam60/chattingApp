@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import SignImage from "../assets/signIN.jpg";
 import LoginImage from "../assets/loginGoogle.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import {
   getAuth,
@@ -11,9 +11,13 @@ import {
 } from "firebase/auth";
 import { useDispatch } from "react-redux";
 import { signinUserInfo } from "../slices/userSlice";
+import { getDatabase, ref, set } from "firebase/database";
 
 const SignIn = () => {
+  const db = getDatabase();
   const auth = getAuth();
+  let navigate = useNavigate();
+
   const provider = new GoogleAuthProvider();
   let dispatch = useDispatch();
 
@@ -44,23 +48,20 @@ const SignIn = () => {
       setPassworderr("Password is required");
     }
     if (email && password) {
-      // let user = {
-      //   name: "rajib",
-      // }
-      // localStorage.setItem("user", JSON.stringify(user))
       signInWithEmailAndPassword(auth, email, password)
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          dispatch(signinUserInfo(user))
-          
+          dispatch(signinUserInfo(user));
+          localStorage.setItem("user", JSON.stringify(user))
+          navigate('/')
         })
         .catch((error) => {
           const errorCode = error.code;
           if (error.code.includes("auth/invalid-credential")) {
             alert("Invalid-credential");
           }
-          
+
           // const errorMessage = error.message;
         });
     }
@@ -68,8 +69,19 @@ const SignIn = () => {
 
   let handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
-      .then((result) => {
-        console.log(result);
+      .then((user) => {
+        set(ref(db, "users/" + user.user.uid), {
+          username: user.user.displayName,
+          email: user.user.email,
+          profile_picture: user.user.photoURL,
+          date: `${new Date().getFullYear()}-${
+            new Date().getMonth() + 1
+          }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,
+        }).then(() => {
+          setTimeout(() => {
+            navigate("/");
+          });
+        });
 
         // const credential = GoogleAuthProvider.credentialFromResult(result);
         // const token = credential.accessToken;

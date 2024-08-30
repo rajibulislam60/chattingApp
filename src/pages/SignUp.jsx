@@ -69,11 +69,12 @@ const SignUp = () => {
                   username: userCredential.user.displayName,
                   email: userCredential.user.email,
                   profile_picture: "",
+                  date: `${new Date().getFullYear()}-${new Date().getMonth()+1}-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`
                 }).then(() => {
                   setTimeout(() => {
                     navigate("/signin");
                     setLoader(false);
-                  }, 2000);
+                  }, 500);
                 });
               })
               .catch((error) => {
