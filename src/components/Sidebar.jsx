@@ -5,17 +5,32 @@ import { AiFillMessage } from "react-icons/ai";
 import { FaRegBell } from "react-icons/fa";
 import { GoGear } from "react-icons/go";
 import { ImExit } from "react-icons/im";
+import { useSelector } from 'react-redux';
+import { MdCameraAlt } from "react-icons/md";
 
 const Sidebar = () => {
+
+  let data = useSelector((state)=>state.userInfo.value)
+
+
+
   return (
     <div className=" h-screen px-8 py-9 ">
       <div className="w-[186px] h-full bg-primary rounded-[20px] text-center">
         <div className="mx-auto pt-9">
-          <img
-            className="w-[100px] h-[100px] rounded-full  inline-block"
-            src={ProfileImage}
-            alt="profile Image"
-          />
+          <div className="w-[100px] h-[100px] overflow-hidden mx-auto rounded-full group relative ">
+            <img
+              className="w-full h-full"
+              src={data.photoURL}
+              alt="profile Image"
+            />
+            <div className="w-full h-full bg-black/50 opacity-0 group-hover:opacity-100 cursor-pointer absolute top-0 left-0 flex justify-center items-center">
+              <MdCameraAlt className="text-white text-2xl" />
+            </div>
+          </div>
+          <h2 className="text-white text-xl font-bold font-nunito mt-3">
+            {data.displayName}
+          </h2>
         </div>
         <div className="w-full h-[88px] relative mt-[78px] ">
           <div className="w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>

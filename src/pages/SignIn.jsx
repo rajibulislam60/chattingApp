@@ -73,7 +73,7 @@ const SignIn = () => {
         set(ref(db, "users/" + user.user.uid), {
           username: user.user.displayName,
           email: user.user.email,
-          profile_picture: user.user.photoURL,
+          image: user.user.photoURL,
           date: `${new Date().getFullYear()}-${
             new Date().getMonth() + 1
           }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,

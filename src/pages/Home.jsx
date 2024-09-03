@@ -19,7 +19,7 @@ const Home = () => {
   let [verify, setVerify] = useState(false);
 
   let data = useSelector((state) => state.userInfo.value);
-  console.log(data);
+ 
 
   onAuthStateChanged(auth, (user) => {
     if (user) {
