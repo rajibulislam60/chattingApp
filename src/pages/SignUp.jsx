@@ -9,7 +9,6 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { Oval } from "react-loader-spinner";
-import signupImg from "./../assets/groupImg.png";
 import { getDatabase, ref, set } from "firebase/database";
 
 const SignUp = () => {
@@ -63,13 +62,13 @@ const SignUp = () => {
           sendEmailVerification(auth.currentUser).then(() => {
             updateProfile(auth.currentUser, {
               displayName: fullName,
-              photoURL: "",
+              photoURL: "/fortest.png",
             })
               .then(() => {
                 set(ref(db, "users/" + userCredential.user.uid), {
                   username: userCredential.user.displayName,
                   email: userCredential.user.email,
-                  image: "",
+                  image: "/fortest.png",
                   date: `${new Date().getFullYear()}-${
                     new Date().getMonth() + 1
                   }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,

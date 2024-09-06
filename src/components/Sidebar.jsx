@@ -1,18 +1,34 @@
-import React from 'react';
+import React, { useState } from "react";
 import ProfileImage from "../assets/profile.jpg";
 import { IoHomeOutline } from "react-icons/io5";
 import { AiFillMessage } from "react-icons/ai";
 import { FaRegBell } from "react-icons/fa";
 import { GoGear } from "react-icons/go";
 import { ImExit } from "react-icons/im";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 import { MdCameraAlt } from "react-icons/md";
+import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 
 const Sidebar = () => {
+  let data = useSelector((state) => state.userInfo.value);
+  const storage = getStorage();
+  let [imageModal, setImageModal] = useState(false);
+  let [imageFile, setImageFile] = useState(null);
 
-  let data = useSelector((state)=>state.userInfo.value)
+  let handleImageFile = (e) => {
+    setImageFile(e.target.files[0]);
+  };
 
+  let handleSave = ()=> {
+    const storageRef = ref(storage, "some-child");
 
+    uploadBytes(storageRef, imageFile).then((snapshot) => {
+      getDownloadURL(storageRef).then((downloadURL) => {
+        console.log("File available at", downloadURL);
+      });
+    });
+    
+  }
 
   return (
     <div className=" h-screen px-8 py-9 ">
@@ -24,7 +40,10 @@ const Sidebar = () => {
               src={data.photoURL}
               alt="profile Image"
             />
-            <div className="w-full h-full bg-black/50 opacity-0 group-hover:opacity-100 cursor-pointer absolute top-0 left-0 flex justify-center items-center">
+            <div
+              onClick={() => setImageModal(true)}
+              className="w-full h-full bg-black/50 opacity-0 group-hover:opacity-100 cursor-pointer absolute top-0 left-0 flex justify-center items-center"
+            >
               <MdCameraAlt className="text-white text-2xl" />
             </div>
           </div>
@@ -53,8 +72,33 @@ const Sidebar = () => {
           <ImExit className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-white" />
         </div>
       </div>
+
+      {imageModal && (
+        <div className="w-full h-screen bg-black/50 absolute top-0 left-0 z-50 flex justify-center items-center">
+          <div className="w-[500px] h-[400px] bg-white rounded-md p-6">
+            <h2 className="font-nunito text-2xl  font-semibold">
+              Upload Your Image
+            </h2>
+            <input
+              onChange={handleImageFile}
+              className="font-nunito text-xl  font-semibold mt-[20px]"
+              type="file"
+            />
+
+            <button onClick={handleSave} className="bg-primary py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]">
+              Save
+            </button>
+            <button
+              onClick={() => setImageModal(false)}
+              className="bg-red-500 ml-2 py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
-}
+};
 
-export default Sidebar
+export default Sidebar;
