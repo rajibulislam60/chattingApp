@@ -1,34 +1,76 @@
-import React, { useState } from "react";
+import React, { createRef, useState } from "react";
 import ProfileImage from "../assets/profile.jpg";
 import { IoHomeOutline } from "react-icons/io5";
 import { AiFillMessage } from "react-icons/ai";
 import { FaRegBell } from "react-icons/fa";
 import { GoGear } from "react-icons/go";
 import { ImExit } from "react-icons/im";
-import { useSelector } from "react-redux";
 import { MdCameraAlt } from "react-icons/md";
-import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytes,
+  uploadString,
+} from "firebase/storage";
+import Cropper from "react-cropper";
+import "cropperjs/dist/cropper.css";
+import { getAuth, updateProfile } from "firebase/auth";
+import { useDispatch, useSelector } from "react-redux";
+import { signinUserInfo } from "../slices/userSlice";
 
 const Sidebar = () => {
+  const auth = getAuth();
+  let dispatch = useDispatch();
   let data = useSelector((state) => state.userInfo.value);
   const storage = getStorage();
   let [imageModal, setImageModal] = useState(false);
   let [imageFile, setImageFile] = useState(null);
 
+  // ------------------react cropper work---------------
+  const [image, setImage] = useState(null);
+  const [cropData, setCropData] = useState("");
+  const cropperRef = createRef();
+
+  // ---------------image upload in file-----------------
   let handleImageFile = (e) => {
-    setImageFile(e.target.files[0]);
+    let files;
+    if (e.dataTransfer) {
+      files = e.dataTransfer.files;
+    } else if (e.target) {
+      files = e.target.files;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImage(reader.result);
+    };
+    reader.readAsDataURL(files[0]);
   };
 
-  let handleSave = ()=> {
+  let handleSave = () => {
     const storageRef = ref(storage, "some-child");
-
-    uploadBytes(storageRef, imageFile).then((snapshot) => {
-      getDownloadURL(storageRef).then((downloadURL) => {
-        console.log("File available at", downloadURL);
+    if (typeof cropperRef.current?.cropper !== "undefined") {
+      setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
+      const message4 = cropperRef.current?.cropper
+        .getCroppedCanvas()
+        .toDataURL();
+      uploadString(storageRef, message4, "data_url").then((snapshot) => {
+        getDownloadURL(storageRef).then((downloadURL) => {
+          updateProfile(auth.currentUser, {
+            photoURL: downloadURL,
+          })
+            .then(() => {
+              dispatch(signinUserInfo(auth.currentUser));
+            })
+            .then(() => {
+              setImageModal(false);
+              setCropData(" ");
+              setImage(" ");
+            });
+        });
       });
-    });
-    
-  }
+    }
+  };
 
   return (
     <div className=" h-screen px-8 py-9 ">
@@ -72,10 +114,10 @@ const Sidebar = () => {
           <ImExit className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-white" />
         </div>
       </div>
-
+      {/* ----------------image upload handling area---------------------- */}
       {imageModal && (
         <div className="w-full h-screen bg-black/50 absolute top-0 left-0 z-50 flex justify-center items-center">
-          <div className="w-[500px] h-[400px] bg-white rounded-md p-6">
+          <div className="w-[500px] bg-white rounded-md p-6">
             <h2 className="font-nunito text-2xl  font-semibold">
               Upload Your Image
             </h2>
@@ -84,10 +126,33 @@ const Sidebar = () => {
               className="font-nunito text-xl  font-semibold mt-[20px]"
               type="file"
             />
+            {image && (
+              <Cropper
+                ref={cropperRef}
+                style={{ height: 400, width: "100%" }}
+                zoomTo={0.5}
+                initialAspectRatio={1}
+                preview=".img-preview"
+                src={image}
+                viewMode={1}
+                minCropBoxHeight={10}
+                minCropBoxWidth={10}
+                background={false}
+                responsive={true}
+                autoCropArea={1}
+                checkOrientation={false} 
+                guides={true}
+              />
+            )}
+            {/* -------------------button area and loader--------------------- */}
 
-            <button onClick={handleSave} className="bg-primary py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]">
+            <button
+              onClick={handleSave}
+              className="bg-primary py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]"
+            >
               Save
             </button>
+
             <button
               onClick={() => setImageModal(false)}
               className="bg-red-500 ml-2 py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]"
