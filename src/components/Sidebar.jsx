@@ -18,9 +18,11 @@ import "cropperjs/dist/cropper.css";
 import { getAuth, updateProfile } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { signinUserInfo } from "../slices/userSlice";
+import { update, ref as dref, getDatabase } from "firebase/database";
 
 const Sidebar = () => {
   const auth = getAuth();
+  const db = getDatabase();
   let dispatch = useDispatch();
   let data = useSelector((state) => state.userInfo.value);
   const storage = getStorage();
@@ -61,6 +63,9 @@ const Sidebar = () => {
           })
             .then(() => {
               dispatch(signinUserInfo(auth.currentUser));
+              update(dref(db, "users/" + data.uid), {
+                image: downloadURL
+              });
             })
             .then(() => {
               setImageModal(false);
@@ -79,7 +84,7 @@ const Sidebar = () => {
           <div className="w-[100px] h-[100px] overflow-hidden mx-auto rounded-full group relative ">
             <img
               className="w-full h-full"
-              src={data.photoURL}
+              src={data && data.photoURL}
               alt="profile Image"
             />
             <div
@@ -90,7 +95,7 @@ const Sidebar = () => {
             </div>
           </div>
           <h2 className="text-white text-xl font-bold font-nunito mt-3">
-            {data.displayName}
+            {data && data.displayName}
           </h2>
         </div>
         <div className="w-full h-[88px] relative mt-[78px] ">
@@ -140,7 +145,7 @@ const Sidebar = () => {
                 background={false}
                 responsive={true}
                 autoCropArea={1}
-                checkOrientation={false} 
+                checkOrientation={false}
                 guides={true}
               />
             )}
