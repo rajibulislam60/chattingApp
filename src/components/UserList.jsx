@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
-import { getDatabase, ref, onValue } from "firebase/database";
+import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import moment from "moment";
 import { useSelector } from "react-redux";
 
 const UsersList = () => {
   let data = useSelector((state) => state.userInfo.value);
+
   let [userList, setUserList] = useState([]);
+
+  let [requestList, setRequestList] = useState([]);
 
   const db = getDatabase();
 
@@ -16,12 +19,40 @@ const UsersList = () => {
       let array = [];
       snapshot.forEach((item) => {
         if (data.uid != item.key) {
-          array.push(item.val());
+          array.push({ ...item.val(), uid: item.key });
         }
       });
       setUserList(array);
     });
   }, []);
+
+  useEffect(() => {
+    const friendrequestRef = ref(db, "friendrequest/");
+    onValue(friendrequestRef, (snapshot) => {
+      let array = [];
+      snapshot.forEach((item) => {
+        array.push(item.val().senderid + item.val().reciverid)
+      });
+      setRequestList(array);
+    });
+  }, []);
+
+  let handleFriendrequest = (item) => {
+    console.log("click", item.uid);
+    set(push(ref(db, "friendrequest/")), {
+      senderid: data.uid,
+      sendername: data.displayName,
+      senderemail: data.email,
+      reciverid: item.uid,
+      recivername: item.username,
+      reciveremail: item.email,
+      date: `${new Date().getFullYear()}-${
+        new Date().getMonth() + 1
+      }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,
+    }).then(() => {
+      alert("add friend success");
+    });
+  };
 
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
@@ -47,9 +78,21 @@ const UsersList = () => {
                 </p>
               </div>
             </div>
-            <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
-              +
-            </button>
+            {requestList.includes(data.uid + item.uid) ||
+            requestList.includes(item.uid + data.uid) ? (
+              <button
+                className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]"
+              >
+                pandding
+              </button>
+            ) : (
+              <button
+                onClick={() => handleFriendrequest(item)}
+                className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]"
+              >
+                +
+              </button>
+            )}
           </div>
         ))}
       </div>

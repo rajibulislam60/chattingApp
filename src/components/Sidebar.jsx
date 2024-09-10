@@ -50,7 +50,10 @@ const Sidebar = () => {
   };
 
   let handleSave = () => {
-    const storageRef = ref(storage, "some-child");
+    const uniqueImageId = `profile-pic-${Date.now()}`;
+    const storageRef = ref(storage, uniqueImageId);
+    
+
     if (typeof cropperRef.current?.cropper !== "undefined") {
       setCropData(cropperRef.current?.cropper.getCroppedCanvas().toDataURL());
       const message4 = cropperRef.current?.cropper
@@ -150,13 +153,11 @@ const Sidebar = () => {
               />
             )}
             {/* -------------------button area and loader--------------------- */}
-
+            
             <button
               onClick={handleSave}
               className="bg-primary py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]"
-            >
-              Save
-            </button>
+            >Save</button>
 
             <button
               onClick={() => setImageModal(false)}
