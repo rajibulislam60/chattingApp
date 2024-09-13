@@ -10,6 +10,7 @@ const UsersList = () => {
   let [userList, setUserList] = useState([]);
 
   let [requestList, setRequestList] = useState([]);
+  let [friends, setFriends] = useState([]);
 
   const db = getDatabase();
 
@@ -36,9 +37,19 @@ const UsersList = () => {
       setRequestList(array);
     });
   }, []);
+   useEffect(() => {
+     const friendrequestRef = ref(db, "friends/");
+     onValue(friendrequestRef, (snapshot) => {
+       let array = [];
+       snapshot.forEach((item) => {
+         array.push(item.val().senderid + item.val().reciverid);
+       });
+       setFriends(array);
+     });
+   }, []);
 
   let handleFriendrequest = (item) => {
-    console.log("click", item.uid);
+
     set(push(ref(db, "friendrequest/")), {
       senderid: data.uid,
       sendername: data.displayName,
@@ -78,12 +89,15 @@ const UsersList = () => {
                 </p>
               </div>
             </div>
-            {requestList.includes(data.uid + item.uid) ||
-            requestList.includes(item.uid + data.uid) ? (
-              <button
-                className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]"
-              >
-                pandding
+            {friends.includes(data.uid + item.uid) ||
+            friends.includes(item.uid + data.uid) ? (
+              <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
+                Friend
+              </button>
+            ) : requestList.includes(data.uid + item.uid) ||
+              requestList.includes(item.uid + data.uid) ? (
+              <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
+                Pending
               </button>
             ) : (
               <button
