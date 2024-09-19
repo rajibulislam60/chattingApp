@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import PersonImg from "../assets/personImg.png";
 import { useSelector } from "react-redux";
-import { getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, onValue, push, ref, set } from "firebase/database";
 
 const Friends = () => {
   let data = useSelector((state) => state.userInfo.value);
   let db = getDatabase();
   let [friends, setFriends] = useState([]);
+  let [blocklist, setBlockList] = useState()
 
   useEffect(() => {
     const friendRef = ref(db, "friends/");
@@ -21,6 +22,26 @@ const Friends = () => {
       setFriends(array);
     });
   }, []);
+
+  let handleBlock = (item)=> {
+    if(data.uid == item.senderid){
+      set(push(ref(db, "blocklist/")), {
+        blockbyid:data.uid,
+        blockby:data.displayName,
+        blockeduserid:item.reciverid,
+        blockeduser:item.recivername
+      });
+    }else{
+      // set(push(ref(db, "blocklist/")), {
+      //   blockbyid: data.uid,
+      //   blockby: data.displayName,
+      //   blockeduserid: item.reciverid,
+      //   blockeduser: item.recivername,
+      // });
+    }
+    
+  }
+
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
       <div className="flex justify-between items-center">
@@ -52,7 +73,12 @@ const Friends = () => {
                 </p>
               </div>
             </div>
-            <button className="font-normal text-[10px]">Today, 8:56pm</button>
+            <button
+              onClick={() => handleBlock(item)}
+              className="bg-primary px-5 py-2 text-white font-normal text-[18px] rounded-[5px]"
+            >
+              Block
+            </button>
           </div>
         ))}
       </div>

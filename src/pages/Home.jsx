@@ -24,7 +24,7 @@ const Home = () => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
       dispatch(signinUserInfo(user));
-      localStorage.setItem("user", JSON.stringify(user));
+      // localStorage.setItem("user", JSON.stringify(user));
     } else {
       navigate("/signin");
       setVerify(false);
