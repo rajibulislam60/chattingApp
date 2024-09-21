@@ -11,6 +11,7 @@ const UsersList = () => {
 
   let [requestList, setRequestList] = useState([]);
   let [friends, setFriends] = useState([]);
+  let [blocklist, setBliocklist] = useState([]);
 
   const db = getDatabase();
 
@@ -45,6 +46,16 @@ const UsersList = () => {
          array.push(item.val().senderid + item.val().reciverid);
        });
        setFriends(array);
+     });
+   }, []);
+   useEffect(() => {
+     const friendrequestRef = ref(db, "blocklist/");
+     onValue(friendrequestRef, (snapshot) => {
+       let array = [];
+       snapshot.forEach((item) => {
+         array.push(item.val().blockbyid + item.val().blockeduserid);
+       });
+       setBliocklist(array);
      });
    }, []);
 
@@ -87,8 +98,13 @@ const UsersList = () => {
                 </p>
               </div>
             </div>
-            {friends.includes(data.uid + item.uid) ||
-            friends.includes(item.uid + data.uid) ? (
+            {blocklist.includes(data.uid + item.uid) ||
+            blocklist.includes(item.uid + data.uid) ? (
+              <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
+                Block
+              </button>
+            ) : friends.includes(data.uid + item.uid) ||
+              friends.includes(item.uid + data.uid) ? (
               <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
                 Friend
               </button>

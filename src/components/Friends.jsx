@@ -2,45 +2,49 @@ import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import PersonImg from "../assets/personImg.png";
 import { useSelector } from "react-redux";
-import { getDatabase, onValue, push, ref, set } from "firebase/database";
+import { getDatabase, onValue, push, ref, remove, set } from "firebase/database";
 
 const Friends = () => {
   let data = useSelector((state) => state.userInfo.value);
   let db = getDatabase();
   let [friends, setFriends] = useState([]);
-  let [blocklist, setBlockList] = useState()
 
   useEffect(() => {
     const friendRef = ref(db, "friends/");
     onValue(friendRef, (snapshot) => {
       let array = [];
       snapshot.forEach((item) => {
-        if(data.uid == item.val().senderid || item.val().reciverid)
+      if (data.uid == item.val().senderid || item.val().reciverid){
         array.push({ ...item.val(), key: item.key });
+      }
+          
       });
 
       setFriends(array);
     });
   }, []);
 
-  let handleBlock = (item)=> {
-    if(data.uid == item.senderid){
+  let handleBlock = (item) => {
+    if (data.uid == item.senderid) {
       set(push(ref(db, "blocklist/")), {
-        blockbyid:data.uid,
-        blockby:data.displayName,
-        blockeduserid:item.reciverid,
-        blockeduser:item.recivername
+        blockbyid: data.uid,
+        blockby: data.displayName,
+        blockeduserid: item.reciverid,
+        blockeduser: item.recivername,
+      }).then(() => {
+        remove(ref(db, "friends/" + item.key));
       });
     }else{
-      // set(push(ref(db, "blocklist/")), {
-      //   blockbyid: data.uid,
-      //   blockby: data.displayName,
-      //   blockeduserid: item.reciverid,
-      //   blockeduser: item.recivername,
-      // });
+      set(push(ref(db, "blocklist/")), {
+        blockbyid: data.uid,
+        blockby: data.displayName,
+        blockeduserid: item.senderid,
+        blockeduser: item.sendername,
+      }).then(() => {
+        remove(ref(db, "friends/" + item.key));
+      });
     }
-    
-  }
+  };
 
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
