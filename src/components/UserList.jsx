@@ -3,6 +3,9 @@ import { BsThreeDotsVertical } from "react-icons/bs";
 import { getDatabase, ref, onValue, set, push } from "firebase/database";
 import moment from "moment";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast, Bounce } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 const UsersList = () => {
   let data = useSelector((state) => state.userInfo.value);
@@ -14,6 +17,8 @@ const UsersList = () => {
   let [blocklist, setBliocklist] = useState([]);
 
   const db = getDatabase();
+
+  
 
   useEffect(() => {
     const userListRef = ref(db, "users/");
@@ -71,11 +76,36 @@ const UsersList = () => {
       date: `${new Date().getFullYear()}-${
         new Date().getMonth() + 1
       }-${new Date().getDate()}-${new Date().getHours()}-${new Date().getMinutes()}-${new Date().getSeconds()}`,
+    }).then(()=> {
+      toast.success("Friend Request Successful", {
+        position: "top-center",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
     })
   };
 
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
+      <ToastContainer
+position="top-center"
+autoClose={2000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="light"
+transition= {Bounce}
+/>
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] font-semibold text-black">User List</h2>
         <BsThreeDotsVertical />
@@ -100,8 +130,8 @@ const UsersList = () => {
             </div>
             {blocklist.includes(data.uid + item.uid) ||
             blocklist.includes(item.uid + data.uid) ? (
-              <button className="bg-primary px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
-                Block
+              <button className="bg-red-500 px-3 py-2 text-white font-normal text-[20px] rounded-[5px]">
+                Friend
               </button>
             ) : friends.includes(data.uid + item.uid) ||
               friends.includes(item.uid + data.uid) ? (
