@@ -9,6 +9,9 @@ import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import Home from "./pages/Home";
 import RootLayout from "./layout/RootLayout";
+import Message from "./pages/Message";
+import Notification from "./pages/Notification";
+import Setting from "./pages/Setting";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +20,9 @@ const router = createBrowserRouter(
       <Route path="/signup" element={<SignUp />}></Route>
       <Route path="/" element={<RootLayout />}>
         <Route index element={<Home />}></Route>
+        <Route path="/message" element={<Message />}></Route>
+        <Route path="/notification" element={<Notification />}></Route>
+        <Route path="/setting" element={<Setting />}></Route>
       </Route>
     </>
   )

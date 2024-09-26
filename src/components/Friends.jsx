@@ -10,9 +10,7 @@ import {
   remove,
   set,
 } from "firebase/database";
-import { ToastContainer, toast, Bounce } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css";
 
 const Friends = () => {
   let data = useSelector((state) => state.userInfo.value);
@@ -42,17 +40,7 @@ const Friends = () => {
         blockeduser: item.recivername,
       }).then(() => {
         remove(ref(db, "friends/" + item.key));
-        toast.success("Block Successful", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        
       });
     } else {
       set(push(ref(db, "blocklist/")), {
@@ -62,36 +50,14 @@ const Friends = () => {
         blockeduser: item.sendername,
       }).then(() => {
         remove(ref(db, "friends/" + item.key));
-        toast.success("Block Successful", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        
       });
     }
   };
 
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] font-semibold text-black">Friends</h2>
         <BsThreeDotsVertical />

@@ -19,8 +19,11 @@ import { getAuth, updateProfile } from "firebase/auth";
 import { useDispatch, useSelector } from "react-redux";
 import { signinUserInfo } from "../slices/userSlice";
 import { update, ref as dref, getDatabase } from "firebase/database";
+import { Link, useLocation } from "react-router-dom";
 
 const Sidebar = () => {
+  let location = useLocation();
+
   const auth = getAuth();
   const db = getDatabase();
   let dispatch = useDispatch();
@@ -102,20 +105,72 @@ const Sidebar = () => {
           </h2>
         </div>
         <div className="w-full h-[88px] relative mt-[78px] ">
-          <div className="w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>
-          <IoHomeOutline className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-primary" />
+          <Link to="/">
+            <div
+              className={`${
+                location.pathname == "/" &&
+                "w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"
+              }`}
+            ></div>
+            <IoHomeOutline
+              className={`${
+                location.pathname == "/"
+                  ? "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-primary"
+                  : "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200"
+              }`}
+            />
+          </Link>
         </div>
         <div className="w-full h-[88px] relative mt-[57px] ">
-          <div className="hidden w-[161px] h-[88px] bg-white ml-auto items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>
-          <AiFillMessage className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200" />
+          <Link to="/message">
+            <div
+              className={`${
+                location.pathname == "/message" &&
+                "w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"
+              }`}
+            ></div>
+            <AiFillMessage
+              className={`${
+                location.pathname == "/message"
+                  ? "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-primary"
+                  : "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200"
+              }`}
+            />
+          </Link>
         </div>
         <div className="w-full h-[88px] relative mt-[57px] ">
-          <div className="hidden w-[161px] h-[88px] bg-white ml-auto items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>
-          <FaRegBell className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200" />
+          <Link to="/notification">
+            <div
+              className={`${
+                location.pathname == "/notification" &&
+                "w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"
+              }`}
+            ></div>
+            <FaRegBell
+              className={`${
+                location.pathname == "/notification"
+                  ? "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-primary"
+                  : "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200"
+              }`}
+            />
+          </Link>
         </div>
         <div className="w-full h-[88px] relative mt-[57px] ">
-          <div className="hidden w-[161px] h-[88px] bg-white ml-auto items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>
-          <GoGear className="text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200" />
+          <Link to="/setting">
+            <div
+              className={`${
+                location.pathname == "/setting" &&
+                "w-[161px] h-[88px] bg-white ml-auto flex items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"
+              }`}
+            ></div>
+            <GoGear
+              className={`${
+                location.pathname == "/setting"
+                  ? "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-primary"
+                  : "text-[46px] w-full mx-auto absolute top-2/4 translate-y-[-50%] text-slate-200"
+              }`}
+            />
+          </Link>
         </div>
         <div className="w-full h-[88px] relative mt-[187px] ">
           <div className="hidden w-[161px] h-[88px] bg-white ml-auto items-center rounded-s-[20px] after:w-[8px] after:h-full after:top-0 after:right-0 after:absolute after:bg-primary after:rounded-s-[20px] after:shadow-red-900 after:shadow-2xl"></div>
@@ -153,11 +208,13 @@ const Sidebar = () => {
               />
             )}
             {/* -------------------button area and loader--------------------- */}
-            
+
             <button
               onClick={handleSave}
               className="bg-primary py-2 px-3 text-xl font-semibold text-white rounded-[8px] mt-[50px]"
-            >Save</button>
+            >
+              Save
+            </button>
 
             <button
               onClick={() => setImageModal(false)}

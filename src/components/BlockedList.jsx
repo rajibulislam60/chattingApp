@@ -10,9 +10,7 @@ import {
   remove,
   set,
 } from "firebase/database";
-import { ToastContainer, toast, Bounce } from "react-toastify";
 
-import "react-toastify/dist/ReactToastify.css";
 
 const BlockedList = () => {
   let data = useSelector((state) => state.userInfo.value);
@@ -54,36 +52,14 @@ const BlockedList = () => {
         recivername: item.blockeduser,
       }).then(() => {
         remove(ref(db, "blocklist/" + item.key));
-        toast.success("UnBlock Successful", {
-          position: "top-center",
-          autoClose: 2000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-          transition: Bounce,
-        });
+        
       });
     }
   };
 
   return (
     <div className="w-[427px] shadow-xl rounded-[20px] px-[20px] mt-[43px]">
-      <ToastContainer
-        position="top-center"
-        autoClose={2000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-        transition={Bounce}
-      />
+      
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] font-semibold text-black">Blocked Users</h2>
         <BsThreeDotsVertical />
