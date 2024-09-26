@@ -12,7 +12,7 @@ import {
 } from "firebase/database";
 
 
-const Friends = () => {
+const Friends = ({ className }) => {
   let data = useSelector((state) => state.userInfo.value);
   let db = getDatabase();
   let [friends, setFriends] = useState([]);
@@ -40,7 +40,6 @@ const Friends = () => {
         blockeduser: item.recivername,
       }).then(() => {
         remove(ref(db, "friends/" + item.key));
-        
       });
     } else {
       set(push(ref(db, "blocklist/")), {
@@ -50,14 +49,14 @@ const Friends = () => {
         blockeduser: item.sendername,
       }).then(() => {
         remove(ref(db, "friends/" + item.key));
-        
       });
     }
   };
 
   return (
-    <div className="w-[427px] shadow-xl rounded-[20px] px-[20px]">
-      
+    <div
+      className={`w-[427px] shadow-xl rounded-[20px] px-[20px] ${className}`}
+    >
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] font-semibold text-black">Friends</h2>
         <BsThreeDotsVertical />
