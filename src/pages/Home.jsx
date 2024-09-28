@@ -46,7 +46,7 @@ const Home = () => {
       {verify ? (
         <section className="py-9 w-full flex justify-around">
           <div>
-            <Search />
+            {/* <Search /> */}
             <GroupList />
             <FriendList />
           </div>

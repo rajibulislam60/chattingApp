@@ -4,12 +4,12 @@ import GroupImg from '../assets/groupImg.png';
 
 const GroupList = () => {
   return (
-    <div className="w-[427px] shadow-xl rounded-[20px] px-[20px] mt-[43px]">
+    <div className="w-[427px] shadow-xl rounded-[20px] px-[20px] ">
       <div className="flex justify-between items-center">
         <h2 className="text-[20px] font-semibold text-black">Group List</h2>
         <BsThreeDotsVertical />
       </div>
-      <div className="w-full h-[347px] overflow-y-scroll">
+      <div className="w-full h-[462px] overflow-y-scroll">
         <div className="flex justify-between items-center border-b border-black/25 pb-6 mt-4">
           <div className="flex gap-[14px] items-center">
             <img
