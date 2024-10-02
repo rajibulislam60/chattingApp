@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import PersonImg from "../assets/personImg.png";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   getDatabase,
   onValue,
@@ -10,9 +10,13 @@ import {
   remove,
   set,
 } from "firebase/database";
-
+import { useLocation } from "react-router-dom";
+import { chatingInfo } from "../slices/chatSlice";
 
 const Friends = ({ className }) => {
+  let dispatch = useDispatch();
+  let location = useLocation();
+
   let data = useSelector((state) => state.userInfo.value);
   let db = getDatabase();
   let [friends, setFriends] = useState([]);
@@ -53,6 +57,15 @@ const Friends = ({ className }) => {
     }
   };
 
+  let handleChat = (item) => {
+    console.log(item);
+    if (data.uid == item.senderid) {
+      dispatch(chatingInfo({ name: item.recivername, id: item.reciverid }));
+    }else{
+      dispatch(chatingInfo({ name: item.sendername, id: item.senderid }));
+    }
+  };
+
   return (
     <div
       className={`w-[427px] shadow-xl rounded-[20px] px-[20px] ${className}`}
@@ -86,12 +99,21 @@ const Friends = ({ className }) => {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => handleBlock(item)}
-              className="bg-primary px-5 py-2 text-white font-normal text-[18px] rounded-[5px]"
-            >
-              Block
-            </button>
+            {location.pathname == "/message" ? (
+              <button
+                onClick={() => handleChat(item)}
+                className="bg-primary px-5 py-2 text-white font-normal text-[18px] rounded-[5px]"
+              >
+                Msg
+              </button>
+            ) : (
+              <button
+                onClick={() => handleBlock(item)}
+                className="bg-primary px-5 py-2 text-white font-normal text-[18px] rounded-[5px]"
+              >
+                Block
+              </button>
+            )}
           </div>
         ))}
       </div>
